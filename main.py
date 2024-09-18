@@ -1,4 +1,4 @@
-from TMS import Ui_MainWindow
+from Ui_TMS import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication,QMainWindow
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import *
@@ -367,7 +367,7 @@ def send_frame():
     # 最后的输出帧
     print("安全校验成功，开始烧录")
     for frame in finish_data:
-        ui.textEdit_3.setText(frame)  # 将数据显示在文本框中
+        ui.textEdit_3.insertPlainText(frame)  # 将数据显示在文本框中
         words = frame.split(' ')
         formatted_words = ['0x' + word for word in words]  # 对每个切片数据前加入'0x'
         for i in range(0, LINMsg.DataLen):
@@ -387,7 +387,7 @@ def send_frame():
         LINMsgRead.ID = int(ID, 16)  # 将文本框中获取的内容转换为16进制
         LINMsgRead.DataLen = 8
         #message = frame
-        ui.textEdit_3.setText(frame)  # 将数据显示在文本框中
+        ui.textEdit_3.insertPlainText(frame)  # 将数据显示在文本框中
         words = frame.split()
         formatted_words = ['0x' + word for word in words]  # 对每个切片数据前加入'0x'
         ret = LIN_Read(DevHandles[0],LINMasterIndex,byref(LINMsgRead),1)
@@ -433,34 +433,62 @@ if __name__ == "__main__":
     #Scan device
     ret = USB_ScanDevice(byref(DevHandles))
     if(ret == 0):
-        print("No device connected!")
+        # print("No device connected!")
+        ui.textEdit_3.insertPlainText("No device connected!")
+        ui.textEdit_3.insertPlainText('\n')
         sys.exit(app.exec_())
     else:
-        print("Have %d device connected!"%ret)
+        # print("Have %d device connected!"%ret)
+        ui.textEdit_3.insertPlainText("Have %d device connected!"%ret)
+        ui.textEdit_3.insertPlainText('\n')
     # Open device
+
     ret = USB_OpenDevice(DevHandles[0])
     if(bool(ret)):
-        print("Open device success!")
+        # print("Open device success!")
+        ui.textEdit_3.insertPlainText("Open device success!")    
+        ui.textEdit_3.insertPlainText('\n')    
     else:
-        print("Open device faild!")
+        # print("Open device faild!")
+        ui.textEdit_3.insertPlainText("Open device faild!")       
+        ui.textEdit_3.insertPlainText('\n') 
         sys.exit(app.exec_())
     # Get device infomation
     USB2XXXInfo = DEVICE_INFO()
     USB2XXXFunctionString = (c_char * 256)()
     ret = DEV_GetDeviceInfo(DevHandles[0],byref(USB2XXXInfo),byref(USB2XXXFunctionString))
     if(bool(ret)):
-        print("USB2XXX device infomation:")
-        print("--Firmware Name: %s"%bytes(USB2XXXInfo.FirmwareName).decode('ascii'))
-        print("--Firmware Version: v%d.%d.%d"%((USB2XXXInfo.FirmwareVersion>>24)&0xFF,(USB2XXXInfo.FirmwareVersion>>16)&0xFF,USB2XXXInfo.FirmwareVersion&0xFFFF))
-        print("--Hardware Version: v%d.%d.%d"%((USB2XXXInfo.HardwareVersion>>24)&0xFF,(USB2XXXInfo.HardwareVersion>>16)&0xFF,USB2XXXInfo.HardwareVersion&0xFFFF))
-        print("--Build Date: %s"%bytes(USB2XXXInfo.BuildDate).decode('ascii'))
-        print("--Serial Number: ",end='')
+        # print("USB2XXX device infomation:")
+        # print("--Firmware Name: %s"%bytes(USB2XXXInfo.FirmwareName).decode('ascii'))
+        # print("--Firmware Version: v%d.%d.%d"%((USB2XXXInfo.FirmwareVersion>>24)&0xFF,(USB2XXXInfo.FirmwareVersion>>16)&0xFF,USB2XXXInfo.FirmwareVersion&0xFFFF))
+        # print("--Hardware Version: v%d.%d.%d"%((USB2XXXInfo.HardwareVersion>>24)&0xFF,(USB2XXXInfo.HardwareVersion>>16)&0xFF,USB2XXXInfo.HardwareVersion&0xFFFF))
+        # print("--Build Date: %s"%bytes(USB2XXXInfo.BuildDate).decode('ascii'))
+        # print("--Serial Number: ",end='')
+        ui.textEdit_3.insertPlainText("USB2XXX device infomation:")
+        ui.textEdit_3.insertPlainText('\n')
+        ui.textEdit_3.insertPlainText("--Firmware Name: %s"%bytes(USB2XXXInfo.FirmwareName).decode('ascii'))
+        ui.textEdit_3.insertPlainText('\n')        
+        ui.textEdit_3.insertPlainText("--Firmware Version: v%d.%d.%d"%((USB2XXXInfo.FirmwareVersion>>24)&0xFF,(USB2XXXInfo.FirmwareVersion>>16)&0xFF,USB2XXXInfo.FirmwareVersion&0xFFFF))
+        ui.textEdit_3.insertPlainText('\n')        
+        ui.textEdit_3.insertPlainText("--Hardware Version: v%d.%d.%d"%((USB2XXXInfo.HardwareVersion>>24)&0xFF,(USB2XXXInfo.HardwareVersion>>16)&0xFF,USB2XXXInfo.HardwareVersion&0xFFFF))
+        ui.textEdit_3.insertPlainText('\n')        
+        ui.textEdit_3.insertPlainText("--Build Date: %s"%bytes(USB2XXXInfo.BuildDate).decode('ascii'))
+        ui.textEdit_3.insertPlainText('\n')        
+        # ui.textEdit_3.insertPlainText("--Serial Number: ",end='')
+
         for i in range(0, len(USB2XXXInfo.SerialNumber)):
-            print("%08X"%USB2XXXInfo.SerialNumber[i],end='')
-        print("")
-        print("--Function String: %s"%bytes(USB2XXXFunctionString.value).decode('ascii'))
+            # print("%08X"%USB2XXXInfo.SerialNumber[i],end='')
+            ui.textEdit_3.insertPlainText("%08X"%USB2XXXInfo.SerialNumber[i])
+        # print("")
+        # print("--Function String: %s"%bytes(USB2XXXFunctionString.value).decode('ascii'))
+        ui.textEdit_3.insertPlainText('\n')
+        ui.textEdit_3.insertPlainText("")
+        ui.textEdit_3.insertPlainText("--Function String: %s"%bytes(USB2XXXFunctionString.value).decode('ascii'))  
+        ui.textEdit_3.insertPlainText('\n')    
     else:
-        print("Get device infomation faild!")
+        # print("Get device infomation faild!")
+        ui.textEdit_3.insertPlainText ("Get device infomation faild!")
+        ui.textEdit_3.insertPlainText('\n')       
         sys.exit(app.exec_())
 
     # 初始化配置主LIN
